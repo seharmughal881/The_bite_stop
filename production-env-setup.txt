@@ -1,0 +1,12 @@
+# Vercel Environment Variables (Frontend)
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-url.onrender.com
+
+# Render Environment Variables (Backend)
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/pizzashop
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+NODE_ENV=production
+PORT=5000
+FRONTEND_URL=https://your-frontend-url.vercel.app
+JWT_SECRET=your_super_secret_jwt_key_here

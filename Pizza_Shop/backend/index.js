@@ -14,22 +14,42 @@ connectDB();
 
 const app = express();
 
-// ✅ Middleware
-app.use(cors());
+// Middleware
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// ✅ Routes
+// Routes
 app.use("/api/allfastfood", allFastFoodRoutes);
 app.use("/api/pizzas", pizzaRoutes);
 app.use("/api/shawarmas", shawarmaRoutes);
 app.use("/api/burgers", burgerRoutes);
 
-// ✅ Health check route
+// Health check route
 app.get("/", (req, res) => {
-  res.send("� Complete Fast Food API is running...");
+  res.json({
+    status: "success",
+    message: "Pizza Bite Stop API is running...",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// API health check
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "success",
+    message: "API is healthy",
+    timestamp: new Date().toISOString()
+  });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });
