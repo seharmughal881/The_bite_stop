@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "Pizza_Shop/crunchicake/package.json",
+      "src": "crunchicake/package.json",
       "use": "@vercel/next"
     }
   ],
@@ -17,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/Pizza_Shop/crunchicake/$1"
+      "dest": "/crunchicake/$1"
     }
   ]
 }
