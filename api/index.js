@@ -2,97 +2,59 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 
 // Load environment variables
 dotenv.config();
 
-// Product Schema (inline for serverless)
-const productSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  category: { type: String, required: true, enum: ["All Fast Food", "Pizzas", "Shawarmas", "Burgers"] },
-  description: { type: String, required: true },
-  price: { type: Number, required: true },
-  originalPrice: { type: Number },
-  discount: { type: String },
-  imageUrl: { type: String },
-  imagePublicId: { type: String },
-  features: { type: [String] },
-  specs: {
-    size: { type: String },
-    type: { type: [String] },
-    ingredients: { type: String }
-  }
-}, { timestamps: true });
-
-const Product = mongoose.model("cakes", productSchema);
-
 const app = express();
 
-// CORS for Vercel
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  credentials: true
-}));
+// CORS
+app.use(cors());
 app.use(express.json());
 
-// Database connection
-const connectDB = async () => {
-  try {
-    if (!process.env.MONGODB_URI) {
-      throw new Error('MONGODB_URI environment variable is not defined');
-    }
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("MongoDB connected successfully");
-  } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-  }
+// Mock data for testing (without database)
+const mockProducts = {
+  "All Fast Food": [
+    { _id: "1", title: "Classic Burger", category: "All Fast Food", price: 299, description: "Delicious burger with fries" },
+    { _id: "2", title: "Chicken Pizza", category: "All Fast Food", price: 599, description: "Tasty chicken pizza" }
+  ],
+  "Pizzas": [
+    { _id: "3", title: "Margherita Pizza", category: "Pizzas", price: 499, description: "Classic margherita" },
+    { _id: "4", title: "Pepperoni Pizza", category: "Pizzas", price: 699, description: "Spicy pepperoni" }
+  ],
+  "Shawarmas": [
+    { _id: "5", title: "Chicken Shawarma", category: "Shawarmas", price: 249, description: "Grilled chicken shawarma" }
+  ],
+  "Burgers": [
+    { _id: "6", title: "Beef Burger", category: "Burgers", price: 399, description: "Juicy beef burger" }
+  ]
 };
 
 // Routes
-app.get("/api/allfastfood", async (req, res) => {
-  try {
-    await connectDB();
-    const products = await Product.find({ category: "All Fast Food" });
-    res.json({ success: true, products });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+app.get("/api/allfastfood", (req, res) => {
+  res.json({ success: true, products: mockProducts["All Fast Food"] });
 });
 
-app.get("/api/pizzas", async (req, res) => {
-  try {
-    await connectDB();
-    const products = await Product.find({ category: "Pizzas" });
-    res.json({ success: true, products });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+app.get("/api/pizzas", (req, res) => {
+  res.json({ success: true, products: mockProducts["Pizzas"] });
 });
 
-app.get("/api/shawarmas", async (req, res) => {
-  try {
-    await connectDB();
-    const products = await Product.find({ category: "Shawarmas" });
-    res.json({ success: true, products });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+app.get("/api/shawarmas", (req, res) => {
+  res.json({ success: true, products: mockProducts["Shawarmas"] });
 });
 
-app.get("/api/burgers", async (req, res) => {
-  try {
-    await connectDB();
-    const products = await Product.find({ category: "Burgers" });
-    res.json({ success: true, products });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+app.get("/api/burgers", (req, res) => {
+  res.json({ success: true, products: mockProducts["Burgers"] });
 });
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "success", message: "API is healthy" });
+});
+
+// Catch all for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ message: "API endpoint not found" });
 });
 
 module.exports = app;
